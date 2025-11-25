@@ -1,0 +1,240 @@
+/* 251123 공통 스타일 */
+
+/* 박스 모델 통일 */
+* {
+  box-sizing: border-box;
+}
+
+/* 기본 타이포 & 배경 */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Apple SD Gothic Neo", "Noto Sans KR", "맑은 고딕", sans-serif;
+  line-height: 1.5;
+  word-break: keep-all; /* 한글 줄바꿈 자연스럽게 */
+}
+
+/* 링크 기본 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 공통 컨테이너 */
+.shell {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* ===== 모든 페이지 공통: 내용 영역 가로폭 제한 ===== */
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 16px; /* 기존 여백 유지 */
+}
+
+/* 메인/헤더 아래 부제목 */
+.sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* 페이지 상단 헤더 */
+.site-header {
+  background: #fff;
+  border-bottom: 1px solid #e8e8ef;
+}
+
+.site-header .shell {
+  padding: 16px;
+}
+
+.site-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+
+/* 공통 섹션 카드 */
+.section {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 18px 0;
+  background: #fff;
+}
+
+.section h2 {
+  font-size: 1.2rem;
+  margin: 0 0 12px;
+}
+
+/* 설명 텍스트 */
+.muted {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* 내부 카드 */
+.card {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: #fafafa;
+}
+
+/* 기본 버튼 스타일 */
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  text-decoration: none;
+  color: #111;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.btn + .btn {
+  margin-left: 10px;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+/* 설명용 작은 텍스트 */
+.btn-desc {
+  font-size: 0.9rem;
+  margin: 6px 0 18px 0;
+  color: #333;
+}
+
+/* 연한 회색 버튼 */
+.btn-lightgrey {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  border: 1px solid #d4d4d8;
+  color: #111;
+}
+
+/* 링크 한 줄 정렬 */
+.link-row {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .link-row {
+    align-items: flex-start;
+  }
+}
+
+/* 메인으로 돌아가기 버튼 래퍼 */
+.home-link-wrap {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  text-align: left !important;
+}
+
+/* 메인으로 돌아가기 버튼 */
+.btn-home {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: #f9fafb;
+  font-size: 0.9rem;
+}
+
+.btn-home:hover {
+  background: #eef2ff;
+}
+
+/* 푸터 */
+.site-footer {
+  border-top: 1px solid #e8e8ef;
+  margin-top: 32px;
+  padding: 16px 0 20px;
+  color: #444;
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
+
+/* 입력 UI 리디자인 */
+input,
+select,
+button,
+textarea {
+  font: inherit;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="time"],
+input[type="date"],
+select,
+textarea {
+  padding: 10px 12px;
+  border: 1px solid #d9d9e3;
+  border-radius: 12px;
+  background: #f9fafb;
+  outline: none;
+  min-width: 0;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.02);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="time"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #b4b4d0;
+  box-shadow: 0 0 0 2px rgba(180,180,208,0.25);
+  background: #fff;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: #f6f7fb;
+  color: #888;
+}
+
+input[type="radio"] {
+  vertical-align: middle;
+  margin-top: -2px;
+}
+
+/* h1 중앙 정렬 */
+h1 {
+  text-align: center !important;
+}
+
+/* 헤드라인 색깔 등 */
+
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 28px 0;
+}
+

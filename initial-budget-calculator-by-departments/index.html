@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>부서별 본예산 편성 내역 산출기</title>
+  <link rel="icon" href="/static/favicon.ico" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/disable-copy.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <h1>부서별 본예산 편성 내역 산출기</h1>
+      <p class="sub">
+        ·부서별 본예산 내역 산출을 돕는 도구 모음.<br/>
+        ·사업 담당자가 본예산 요구서를 작성해야 하나, 현실적으로는 구조상 회계 업무를 하는 행정직이 산출 내역을 작성하게 됨. <br/>
+        ·회계 말 업무가 몰릴 것을 대비하여 본예산 산출 보조 도구로 만들어둠. <br/> 
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- 안내 섹션 -->
+    <section class="section">
+      <h2>사이트 설명 및 사용 방법 안내</h2>
+      <p class="muted">
+        ·사업 부서별 담당자가 학교회계 본예산 요구서를 스스로 작성할 수 있도록 보조하는 기능임.<br/>
+        ·담당 부서의 계산기를 선택하면 상세 페이지가 열림.<br/>
+        ·단가, 운영 기간, 횟수, 사회보험료 부과금액 등을 반영하여 <b>"총 소요 예산" 및 "산출식"</b>을 자동 생성함.<br/>
+        <br/>
+      </p>
+
+    </section>
+
+    <!-- 늘봄·방과후 / 학생 교육 프로그램 관련 -->
+    <section class="section">
+      <h2>늘봄학교 업무 관련 (늘봄전담실)</h2>
+      <p class="muted">
+        ·재료비, 운영비, 강사료, 늘봄전담사 추가 근무에 따른 사회보험료 기관부담금 소요액 등 산출함.<br/>
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./after-school-budget-calculator/">
+          늘봄학교 관련 예산 소요액 계산기
+        </a>
+        <p class="btn-desc">
+          ·선택형 및 맞춤형 교육 프로그램: 운영기간, 수업 시수 등 입력<br/>
+          ·방과후 강사료, 늘봄전담사 사회보험료 기관부담금, 재료비, 운영비 등 항목 합산하여 산출<br>
+          ·2025회계 기준으로 단가, 사회보험요율 반영함. <br/>
+        </p>
+      </div>
+    </section>
+
+    <!-- 급식실 / 보건·위생 관련 -->
+    <section class="section">
+      <h2>급식 업무 관련 (조리실 및 영양교사실)</h2>
+      <p class="muted">
+        ·조리 도구, 위생·소독, 소모품, 시설 수선 등 산출함 <br/>
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./school-cafeteria-budget-calculator/">
+          급식 관련 예산 계산기
+        </a>
+        <p class="btn-desc">
+          ·조리실 위생 용품, 소독제, 유니폼 (위생복), 조리 기구, 소모품, 시설·기구 수선비 등 필요 수량 입력하면 산출됨. <br/>
+          ·조리환경 안전 등이 확보되는 최소 수준 이상으로 편성해야 함. <br/>
+        </p>
+      </div>
+    </section>
+
+    <!-- 유치원 -->
+    <section class="section">
+      <h2>병설유치원 교육 활동 관련</h2>
+      <p class="muted">
+        ·병설유치원의 놀이, 체험, 행사, 간식, 교재 교구 등 교육활동을 위한 예산 산출 <br/>
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./kindergarten-budget-calculator/">
+          병설유치원 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 유아 수, 활동 회수, 1인당 단가 설정을 통해 체험학습·행사·간식비 등을 자동 계산.<br>
+          · 유치원 교육과정 편성 계획과 연계 가능한 구조로 설계 예정. <br/>
+        </p>
+      </div>
+    </section>
+
+    <!-- 특수교육 -->
+    <section class="section">
+      <h2>특수학급 교육 활동 업무 관련 예산</h2>
+      <p class="muted">
+        ·특수학급 교육 활동을 위한 맞춤형 교구, 보조 공학 기기, 치료 지원, 체험 활동 등의 예산 산출 <br/>
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./special-education-budget-calculator/">
+          특수교육 활동 관련 예산 계산기
+        </a>
+        <p class="btn-desc">
+          ·학생 수, 지원 유형 (치료·보조공학·체험), 연간 횟수 등에 따라 세부 항목별 소요액을 산출함 <br/>
+          ·(동일 항목 반복 요구 시, 전년도 대비 증감 확인할 수 있도록 기능 개선 예정) <br/>
+        </p>
+      </div>
+    </section>
+
+    <!-- 과학정보부 / 연구부 / 체육부 / 인성안전부 -->
+    <section class="section">
+      <h2>교육과정·정보·체육·인성·안전 관련</h2>
+      <p class="muted">
+        과학정보부, 연구부, 체육부, 인성안전부에서 요구하는 <b>실험·행사·경기·안전체험</b> 예산을<br>
+        표준 단가와 회수에 맞춰 산출하는 계산기 모음입니다. 
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./science-info-budget-calculator/">
+          과학정보부 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 실험소모품·기자재 구입·정보화 장비 및 소프트웨어 라이선스 등 연간 소요액 산출용 템플릿.
+        </p>
+      </div>
+
+      <div class="card">
+        <a class="btn" href="./research-department-budget-calculator/">
+          연구부 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 각종 연구학교·학교자체연구·교사연수·연구자료 제작비 등의 예산 산출용.
+        </p>
+      </div>
+
+      <div class="card">
+        <a class="btn" href="./pe-department-budget-calculator/">
+          체육부 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 체육용품·경기 참가비·심판비·시설 보수비 등 체육부 예산 항목별 소요액 산출용.
+        </p>
+      </div>
+
+      <div class="card">
+        <a class="btn" href="./character-safety-budget-calculator/">
+          인성·안전부 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 인성교육·학교폭력예방·안전체험·캠페인 물품 등 예산 산출용.<br>
+          · 학생 1인당 단가 및 행사 회수 기반으로 자동 계산하도록 설계 예정.
+        </p>
+      </div>
+    </section>
+
+    <!-- 행정실 자체 예산 -->
+    <section class="section">
+      <h2>교육행정실 자체 예산</h2>
+      <p class="muted">
+        교육행정실에서 직접 편성하는 <b>사무용품·비품·시설수선·업무추진 관련 예산</b> 소요액을<br>
+        일관된 기준으로 산출하기 위한 계산기입니다. :contentReference[oaicite:5]{index=5}
+      </p>
+
+      <div class="card">
+        <a class="btn" href="./administration-office-budget-calculator/">
+          교육행정실 예산 계산기
+        </a>
+        <p class="btn-desc">
+          · 사무용품, OA장비 유지보수, 프린터 토너, 시설경미수선비 등 반복 항목 위주.<br>
+          · 전년 실적 및 학교 규모를 고려한 “권장 편성 범위”를 제시하는 방향으로 확장 예정.
+        </p>
+      </div>
+    </section>
+
+    <!-- 추후 추가 예정 안내 -->
+    <section class="section">
+      <h2>추가 예정 및 운영 원칙</h2>
+      <p class="muted">
+        · 각 계산기는 <b>2025회계 연도 기준 지침·편람</b>을 반영하여 설계하며,<br>
+          지침 개정 시 <b>스냅샷 JSON 교체</b> 방식으로 연도별 버전을 관리할 예정입니다.<br>
+        · <b>“추경으로 맞추면 되겠지”를 줄이는 것</b>이 이 페이지의 1차 목표이고,<br>
+          <b>사업담당이 예산의 구조를 이해하게 만드는 것</b>이 2차 목표입니다.
+      </p>
+    </section>
+  </main>
+
+  <footer style="text-align:center; margin-top:15px; color:#444;">
+    제작자: 씩씩하고 귀여운 고주무관 · Contact: edusproutcomics@naver.com · 개인적인 토이 프로젝트입니다.
+  </footer>
+
+
+    <div class="btns">
+      <a class="btn" href="/">메인으로 돌아가기</a>
+    </div>
+  </div>
+
+  <script src="/static/global-loader.js?v=1"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

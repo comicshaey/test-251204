@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>학년도별 주간 업무 일정 달력</title>
+  <link rel="icon" href="/static/favicon.ico" />
+  <style>
+    :root{
+      --black:#111;
+      --line:#e5e5e5;
+      --sun:#c8352d;
+      --sat:#1e5fbf;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:#fff;
+      color:#111;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","맑은 고딕",sans-serif;
+    }
+    .wrap{
+      max-width:1060px;
+      margin:24px auto;
+      padding:0 16px;
+    }
+    h1{
+      font-size:1.35rem;
+      margin:0 0 10px;
+    }
+    .muted{
+      color:#666;
+      font-size:.92rem;
+      margin:0 0 14px;
+    }
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--black);
+      text-decoration:none;
+      color:#fff;
+      background:#111;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .toolbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin:8px 0 14px;
+      justify-content:space-between;
+    }
+
+    /* 주간 블록 전체 */
+    .week-block{
+      margin:18px 0 22px;
+    }
+    .week-header{
+      position:sticky;
+      top:0;
+      background:#fff;
+      padding:6px 0;
+      z-index:5;
+      border-bottom:1px solid #f1f1f1;
+    }
+    .week-header h2{
+      font-size:1.05rem;
+      margin:0;
+    }
+
+    /* 그리드 레이아웃 (요일 1행 + 일정 1행) */
+    .grid{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+    }
+    .row{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+    }
+    .head{
+      background:#fafafa;
+      font-weight:900;
+      text-align:center;
+      padding:10px 8px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      font-size:.9rem;
+    }
+    .head:last-child{
+      border-right:none;
+    }
+
+    .cell{
+      min-height:140px;
+      border-right:1px solid var(--line);
+      padding:8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      border-bottom:1px solid var(--line);
+    }
+    .cell:last-child{
+      border-right:none;
+    }
+    .date{
+      font-size:.9rem;
+      font-weight:900;
+      margin-bottom:2px;
+    }
+    .txt{
+      flex:1;
+      min-height:0;
+      white-space:pre-wrap;
+      line-height:1.35;
+      overflow:auto;
+      overflow-wrap:anywhere;
+      padding-right:2px;
+      font-size:.9rem;
+    }
+
+    /* 일/토 색상 강조 */
+    .row:nth-child(1) > .head:nth-child(1){ color:var(--sun) }
+    .row:nth-child(1) > .head:nth-child(7){ color:var(--sat) }
+    .row:nth-child(2) > .cell:nth-child(1) .date{ color:var(--sun) }
+    .row:nth-child(2) > .cell:nth-child(7) .date{ color:var(--sat) }
+
+    /* 날짜 → 월간 달력 링크 스타일 */
+    .date-link{
+      color:inherit;
+      text-decoration:none;
+      padding:2px 4px;
+      border-radius:6px;
+      display:inline-block;
+    }
+    .date-link:hover{
+      text-decoration:underline;
+      background:#f3f3f3;
+    }
+
+    .bottom-nav{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin:30px 0;
+    }
+    footer{
+      margin:12px 0 8px;
+      text-align:center;
+      color:#555;
+      font-size:.9rem;
+    }
+
+    @media print{
+      .toolbar{display:none}
+      .bottom-nav{display:none}
+      .wrap{max-width:none}
+      .txt{overflow:visible}
+      .week-header{position:static}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="btn" href="/">메인으로 돌아가기</a>
+      <a class="btn" href="/calendar/">학년도별 모음으로</a>
+    </div>
+
+    <h1 id="title">학년도별 주간 업무 일정 달력</h1>
+    <p class="muted" id="rangeText">기간: 자동 계산 중…</p>
+
+    <div id="root"></div>
+
+    <div class="bottom-nav">
+      <a class="btn" href="/calendar/">학년도별 모음으로</a>
+      <a class="btn" href="/">메인으로 돌아가기</a>
+    </div>
+
+    <footer>
+      제작자: 씩씩하고 귀여운 고주무관 · Contact: edusproutcomics@naver.com · 개인적인 토이 프로젝트입니다.
+    </footer>
+  </div>
+
+  <script>
+    // 쿼리 파라미터
+    const q = new URLSearchParams(location.search);
+    const START_PARAM = q.get("start"); 
+    const WEEKS = Math.max(1, parseInt(q.get("weeks") || "4", 10) || 1);
+    const CUSTOM_TITLE = q.get("title") || "";
+
+    const titleEl = document.getElementById("title");
+    const rangeTextEl = document.getElementById("rangeText");
+    const root = document.getElementById("root");
+    if (CUSTOM_TITLE) titleEl.textContent = CUSTOM_TITLE;
+
+    let NOTES = {}; // JSON에서 채움
+
+    // 날짜 유틸
+    const pad = n => (n < 10 ? "0" : "") + n;
+    const ymd = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+    const ym  = (y, m) => `${y}-${pad(m)}`;
+    const wdK = w => ["일", "월", "화", "수", "목", "금", "토"][w];
+
+    function parseYmd(str) {
+      const [y, m, d] = str.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function addDays(base, n) {
+      const d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+      d.setDate(d.getDate() + n);
+      return d;
+    }
+
+    function escapeHtml(s) {
+      if (!s) return "";
+      return s.replace(/[&<>"]/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;"
+      }[m]));
+    }
+
+    // 기준 시작일: 파라미터 없으면 오늘 날짜 기준
+    let startDate;
+    if (START_PARAM) {
+      startDate = parseYmd(START_PARAM);
+    } else {
+      const today = new Date();
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    }
+
+    function setRangeText(){
+      const start = startDate;
+      const end = addDays(startDate, WEEKS * 7 - 1);
+      const startStr = `${start.getFullYear()}.${start.getMonth()+1}.${start.getDate()}.(${wdK(start.getDay())})`;
+      const endStr   = `${end.getFullYear()}.${end.getMonth()+1}.${end.getDate()}.(${wdK(end.getDay())})`;
+      rangeTextEl.textContent = `기간: ${startStr} · ${endStr} · ${WEEKS}주`;
+    }
+
+    // 주 1개 렌더링
+    function renderWeek(weekIndex, weekStartDate) {
+      const weekBlock = document.createElement("section");
+      weekBlock.className = "week-block";
+
+      // 주간 헤더 (몇 주차 + 기간)
+      const weekHeader = document.createElement("div");
+      weekHeader.className = "week-header";
+
+      const start = weekStartDate;
+      const end = addDays(weekStartDate, 6);
+
+      const label = `${start.getFullYear()}.${start.getMonth()+1}.${start.getDate()}.(${wdK(start.getDay())}) ~ ` +
+                    `${end.getFullYear()}.${end.getMonth()+1}.${end.getDate()}.(${wdK(end.getDay())})`;
+
+      weekHeader.innerHTML = `<h2>${weekIndex+1}주차: ${label}</h2>`;
+      weekBlock.appendChild(weekHeader);
+
+      // 그리드 생성 (요일 헤더 + 일정 1행)
+      const grid = document.createElement("div");
+      grid.className = "grid";
+
+      const days = ["일", "월", "화", "수", "목", "금", "토"];
+
+      let html = "";
+
+      // 1행: 요일
+      html += '<div class="row">';
+      for (let i = 0; i < 7; i++) {
+        html += `<div class="head">${days[i]}</div>`;
+      }
+      html += "</div>";
+
+      // 2행: 날짜 + 메모
+      html += '<div class="row">';
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(weekStartDate, i);
+        const key = ymd(d.getFullYear(), d.getMonth()+1, d.getDate());
+        const text = NOTES[key] || "";
+
+        const labelTxt = `${d.getDate()}일 (${wdK(d.getDay())})`;
+
+        // 이 날짜가 속한 월의 월간 달력으로 이동하는 링크
+        const monthStartStr = ym(d.getFullYear(), d.getMonth()+1);
+        const monthlyTitle = encodeURIComponent(`${d.getFullYear()}년 ${d.getMonth()+1}월`);
+        const monthlyUrl =
+          `/calendar/calendar-monthly-academic.html?start=${monthStartStr}&months=1&title=${monthlyTitle}`;
+
+        html += '<div class="cell">';
+        html += `<div class="date"><a href="${monthlyUrl}" class="date-link">${labelTxt}</a></div>`;
+        html += `<div class="txt">${escapeHtml(text)}</div>`;
+        html += '</div>';
+      }
+      html += "</div>";
+
+      grid.innerHTML = html;
+      weekBlock.appendChild(grid);
+      root.appendChild(weekBlock);
+    }
+
+    function renderRange(){
+      for (let i = 0; i < WEEKS; i++) {
+        const weekStart = addDays(startDate, i * 7);
+        renderWeek(i, weekStart);
+      }
+    }
+
+    // ==== 6개월 단위 JSON ====
+
+    function getHalfKeyByDate(date){
+      const y = date.getFullYear();
+      const m = date.getMonth() + 1;
+      let yearStart;
+      let half;
+
+      if (m >= 3 && m <= 8) {
+        yearStart = y;
+        half = '03-08';
+      } else {
+        if (m >= 9) {
+          yearStart = y;
+        } else {
+          yearStart = y - 1;
+        }
+        half = '09-02';
+      }
+      return `${yearStart}-${half}`;
+    }
+
+    function collectHalfKeysForWeekly(startDate, weeks){
+      const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const end = addDays(start, weeks * 7 - 1);
+      const set = new Set();
+
+      const probe = new Date(start.getFullYear(), start.getMonth(), 1);
+      while (probe <= end){
+        set.add(getHalfKeyByDate(probe));
+        probe.setMonth(probe.getMonth()+1);
+      }
+      return Array.from(set);
+    }
+
+    async function loadNotes(files){
+      NOTES = {};
+      await Promise.all(files.map(async (url)=>{
+        try{
+          const res = await fetch(url);
+          if(!res.ok) return;
+          const data = await res.json();
+          Object.assign(NOTES, data);
+        }catch(e){
+          // 파일 없으면 무시
+        }
+      }));
+    }
+
+    (async function init(){
+      const halfKeys = collectHalfKeysForWeekly(startDate, WEEKS);
+      const files = halfKeys.map(key => `notes/notes-${key}.json`);
+      await loadNotes(files);
+      setRangeText();
+      renderRange();
+    })();
+  </script>
+</body>
+</html>

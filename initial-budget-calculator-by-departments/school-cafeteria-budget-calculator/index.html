@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>급식실 예산 계산기</title>
+  <link rel="icon" href="/static/favicon.ico" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/disable-copy.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <h1>급식실 예산 계산기</h1>
+      <p class="sub">
+        영양(교)사가 작성하는 <b>급식실 본예산 세입·세출 요구</b> 중,<br>
+        식재료 외 <b>조리도구 · 위생 · 소독 · 소모품 · 기구 교체·수선</b> 예산을 산출하기 위한 계산기입니다.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- 사용 안내 -->
+    <section class="section">
+      <h2>사용 시나리오</h2>
+      <p class="muted">
+        · 급식실 담당(영양사)이 연간 급식 운영계획을 세운 뒤,<br>
+          필요한 <b>위생·소독·조리도구·기구수선</b> 항목을 이 계산기에 입력하여 <b>총 소요액</b>을 산출합니다.<br>
+        · 산출 결과는 <b>“2025년도 본예산 세출예산요구서(급식실)”</b>의 산출식/금액 란에 그대로 옮겨 적는 것을 전제로 합니다.<br>
+        · 식재료비(식품비)는 별도 단가표·식단표를 기반으로 산정하되, 필요하면 추후 별도 모듈로 분리할 수 있습니다.
+      </p>
+
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/initial-budget-calculator-by-departments/" class="btn-home">부서별 본예산 메뉴로</a>
+        <a href="/" class="btn-home">전체 메인으로</a>
+      </div>
+    </section>
+
+    <!-- 입력 폼 -->
+    <section class="section">
+      <h2>1. 기본 정보</h2>
+      <form id="cafeteriaForm">
+        <div class="grid-2">
+          <div class="field">
+            <label for="year">회계연도</label>
+            <input id="year" type="number" value="2025" min="2020" max="2100" />
+          </div>
+          <div class="field">
+            <label for="writer">작성자</label>
+            <input id="writer" type="text" placeholder="예: 영양 이호주" />
+          </div>
+        </div>
+
+        <p class="muted">
+          아래 표에 <b>위생·소독, 조리도구·소모품, 기구 교체·수선, 기타</b> 항목을 추가하면서 예산을 산출합니다.<br>
+          항목별로 <b>단가 · 수량</b>을 입력하면 자동으로 <b>소계/총계</b>가 계산됩니다.
+        </p>
+
+        <hr>
+
+        <h2>2. 항목 입력</h2>
+
+        <div class="table-wrapper">
+          <table class="tbl" id="itemTable">
+            <thead>
+              <tr>
+                <th style="width:140px;">카테고리</th>
+                <th>항목명</th>
+                <th style="width:120px;">단가(원)</th>
+                <th style="width:120px;">수량</th>
+                <th style="width:130px;">금액(원)</th>
+                <th style="width:90px;">비고</th>
+                <th style="width:70px;">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JS로 기본 3행 정도 생성 -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="field" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" id="addRowBtn" class="btn-ghost">
+            + 행 추가
+          </button>
+          <button type="button" id="clearRowsBtn" class="btn-ghost">
+            전체 삭제
+          </button>
+        </div>
+
+        <hr>
+
+        <h2>3. 결과 및 요약</h2>
+        <div id="summaryBox" class="card result">
+          <p class="muted">
+            표에 항목을 추가하고 단가·수량을 입력하면, 여기에서 <b>카테고리별 소계 · 총계</b>가 자동 계산됩니다.
+          </p>
+        </div>
+
+        <div class="field" style="margin-top:16px;">
+          <button type="button" id="makeNoteBtn" class="btn-primary">
+            세출예산요구서용 설명문 생성
+          </button>
+        </div>
+
+        <div id="noteBox" class="card" style="margin-top:12px;">
+          <p class="muted">
+            [설명문 예시]<br>
+            위 표를 토대로 자동 생성된 <b>요약 문구</b>가 여기에 나타납니다.<br>
+            필요 시 일부 표현을 수정하여 세출예산요구서 산출식 또는 비고란에 활용하세요.
+          </p>
+        </div>
+      </form>
+    </section>
+
+    <section class="section">
+      <h2>주의사항</h2>
+      <p class="muted">
+        · 이 계산기는 급식실 <b>비식품(위생·소독·기구·소모품)</b> 예산 편성을 돕기 위한 보조 도구입니다.<br>
+        · 실제 편성 시에는 <b>교육청 급식 운영 지침, 급식비 조정 지침</b> 등을 반드시 함께 확인해야 합니다.<br>
+        · 자주 사용하는 항목의 단가를 스냅샷(JSON)으로 관리하면, 나중에 <b>드롭다운 선택만으로 자동 입력</b>하는 방식으로 확장할 수 있습니다.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell" style="text-align:center;">
+      <p>급식실 예산 편성 스트레스 완화 프로젝트 · 씩씩한 고주무관이 만드는 자동화 도구</p>
+      <p><a href="/initial-budget-calculator-by-departments/">[부서별 본예산 메뉴로 돌아가기]</a></p>
+    </div>
+  </footer>
+
+
+
+<script src="/static/budget-core.js?v=1"></script>
+  <script src="/initial-budget-calculator-by-departments/school-cafeteria-budget-calculator/app.js"></script>
+  <script src="/static/global-loader.js?v=1"></script>
+</body>
+</html>

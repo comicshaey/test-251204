@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>늘봄·방과후 예산 계산기</title>
+  <link rel="icon" href="/static/favicon.ico" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/disable-copy.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <h1>늘봄·방과후 예산 계산기</h1>
+      <p class="sub">
+        선택형 교육 프로그램(방과후교실, 유·무료), 맞춤형 교육 프로그램, 선택형 돌봄 프로그램 등<br>
+        <b>강사료 · 사회보험료 기관부담금 · 재료비 · 운영비</b>를 한 번에 산출하는 계산기입니다.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- 사용 안내 -->
+    <section class="section">
+      <h2>사용 시나리오</h2>
+      <p class="muted">
+        · 사업담당 교사가 <b>늘봄 프로그램 계획안</b>을 세운 뒤, 이 페이지에서 예산 소요액을 산출하고<br>
+          결과에 나온 <b>“산출식·총액”을 세출예산요구서에 그대로 옮겨 적는 용도</b>입니다.<br>
+        · 4대보험 요율은 연도별로 바뀔 수 있으므로, 초기 버전에서는 <b>요율을 입력받는 방식</b>으로 설계했습니다.<br>
+          (나중에 2025·2026 스냅샷 JSON 연결하면, 선택만으로 자동 반영 가능)
+      </p>
+
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/initial-budget-calculator-by-departments/" class="btn-home">부서별 본예산 메뉴로</a>
+        <a href="/" class="btn-home">전체 메인으로</a>
+      </div>
+    </section>
+
+    <!-- 입력 폼 -->
+    <section class="section">
+      <h2>1. 프로그램 기본 정보</h2>
+      <form id="afterSchoolForm">
+        <div class="grid-2">
+          <div class="field">
+            <label for="programType">프로그램 구분</label>
+            <select id="programType" required>
+              <option value="">선택하세요</option>
+              <option value="select-paid">선택형 교육(유료 방과후)</option>
+              <option value="select-free">선택형 교육(무료 방과후)</option>
+              <option value="custom-edu">맞춤형 교육 프로그램</option>
+              <option value="select-care">선택형 돌봄 프로그램</option>
+            </select>
+            <p class="help">
+              · 선택형 교육: 기존 방과후교실(유료/무료)<br>
+              · 맞춤형 교육: 학생 맞춤형 프로그램<br>
+              · 선택형 돌봄: 돌봄 내 선택형 프로그램
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="teacherType">강사 유형</label>
+            <select id="teacherType" required>
+              <option value="">선택하세요</option>
+              <option value="custom">맞춤형 강사</option>
+              <option value="select-paid">선택형 유료 강사</option>
+              <option value="select-free">선택형 무료 강사</option>
+            </select>
+            <p class="help">
+              · 강사 유형에 따라 사회보험 적용 여부·방식이 달라질 수 있습니다.<br>
+              · 상세 규정은 추후 스냅샷 JSON으로 반영 예정.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="field">
+            <label for="monthStart">운영 시작월</label>
+            <select id="monthStart" required>
+              <option value="">선택</option>
+              <option value="3">3월</option>
+              <option value="4">4월</option>
+              <option value="5">5월</option>
+              <option value="6">6월</option>
+              <option value="7">7월</option>
+              <option value="8">8월</option>
+              <option value="9">9월</option>
+              <option value="10">10월</option>
+              <option value="11">11월</option>
+              <option value="12">12월</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="monthEnd">운영 종료월</label>
+            <select id="monthEnd" required>
+              <option value="">선택</option>
+              <option value="3">3월</option>
+              <option value="4">4월</option>
+              <option value="5">5월</option>
+              <option value="6">6월</option>
+              <option value="7">7월</option>
+              <option value="8">8월</option>
+              <option value="9">9월</option>
+              <option value="10">10월</option>
+              <option value="11">11월</option>
+              <option value="12">12월</option>
+            </select>
+            <p class="help">
+              · 방학·공휴일 등 실제 미운영 기간은 나중에 월별 상세 모드에서 세분화할 수 있도록 확장 예정입니다.<br>
+              · 1차 버전은 “운영 개월 수 기준”으로 단순 산정합니다.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="weeksPerMonth">월 기준 운영 주차</label>
+            <input id="weeksPerMonth" type="number" min="1" max="5" step="0.5" value="4" required />
+            <p class="help">
+              · 통상 4주 기준, 필요 시 3.5주 등으로 조정 가능합니다.
+            </p>
+          </div>
+        </div>
+
+        <hr>
+
+        <h2>2. 강사료 산출</h2>
+        <div class="grid-3">
+          <div class="field">
+            <label for="sessionsPerWeek">주당 회기 수</label>
+            <input id="sessionsPerWeek" type="number" min="1" step="1" value="2" required />
+          </div>
+
+          <div class="field">
+            <label for="hoursPerSession">회당 시수(시간)</label>
+            <input id="hoursPerSession" type="number" min="0.5" step="0.5" value="1" required />
+          </div>
+
+          <div class="field">
+            <label for="hourlyRate">강사 시급(또는 시간당 단가, 원)</label>
+            <input id="hourlyRate" type="number" min="0" step="1000" required />
+            <p class="help">
+              · 단가 기준: 2025 늘봄·방과후 운영기준에 맞춰 입력합니다.<br>
+              · 회당 단가 기준인 경우, “회당 금액 ÷ 시수”로 환산해서 넣어도 됩니다.
+            </p>
+          </div>
+        </div>
+
+        <hr>
+
+        <h2>3. 사회보험 기관부담금(임시: 요율 수동 입력)</h2>
+        <p class="muted">
+          · 실제 업무에서는 연도별 요율을 스냅샷(JSON)으로 관리하는 것이 정석이지만,<br>
+            1차 버전에서는 <b>강사료 대비 %</b>로 간단히 산출하도록 구성했습니다.<br>
+          · 예) 국민연금 4.5%, 건강보험 3.545%, 장기요양 0.5%, 고용보험 0.9%, 산재보험 0.7% 등<br>
+            정확한 값은 연도별 공문 기준을 확인해서 입력하면 됩니다.
+        </p>
+
+        <div class="grid-3">
+          <div class="field">
+            <label for="pensionRate">국민연금 요율(%, 기관부담)</label>
+            <input id="pensionRate" type="number" min="0" step="0.01" value="4.5" />
+          </div>
+          <div class="field">
+            <label for="healthRate">건강·장기요양 요율(%, 기관부담)</label>
+            <input id="healthRate" type="number" min="0" step="0.01" value="4.0" />
+          </div>
+          <div class="field">
+            <label for="employmentRate">고용보험 요율(%, 기관부담)</label>
+            <input id="employmentRate" type="number" min="0" step="0.01" value="0.9" />
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="field">
+            <label for="industryRate">산재보험 요율(%, 기관부담)</label>
+            <input id="industryRate" type="number" min="0" step="0.01" value="0.7" />
+          </div>
+          <div class="field">
+            <label for="insuranceApply">사회보험 적용 여부</label>
+            <select id="insuranceApply">
+              <option value="full">일반 적용(모든 보험)</option>
+              <option value="partial">부분 적용(초단시간 등)</option>
+              <option value="none">미적용(해당 없음)</option>
+            </select>
+            <p class="help">
+              · “부분 적용” 선택 시, 계산 결과에서 일부 보험을 제외하거나 수기로 조정할 수 있도록 안내합니다.
+            </p>
+          </div>
+          <div class="field">
+            <label for="insuranceAdjust">보험료 보정(원, ±)</label>
+            <input id="insuranceAdjust" type="number" step="1000" value="0" />
+            <p class="help">
+              · 실제 지원청 산식과 미세 오차가 있을 경우, 여기에서 +/− 보정합니다.
+            </p>
+          </div>
+        </div>
+
+        <hr>
+
+        <h2>4. 재료비 · 운영비</h2>
+        <div class="grid-3">
+          <div class="field">
+            <label for="studentCount">참여 학생 수(명)</label>
+            <input id="studentCount" type="number" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label for="materialPerStudent">1인당 재료비/간식비(원)</label>
+            <input id="materialPerStudent" type="number" min="0" step="500" />
+            <p class="help">
+              · 선택형 교육: 활동 재료비, 선택형 돌봄: 간식·놀이 재료 등<br>
+              · 회당이 아닌 “전체 기간 기준 1인당 총액”으로 보는 단순 모드입니다.
+            </p>
+          </div>
+          <div class="field">
+            <label for="operationRate">운영비 비율(강사료 기준, %)</label>
+            <input id="operationRate" type="number" min="0" step="0.5" value="3" />
+            <p class="help">
+              · 홍보물, 인쇄비, 소액 물품 등 운영경비를 강사료 기준 %로 잡는 용도입니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="field">
+          <button type="submit" class="btn-primary">
+            예산 소요액 계산하기
+          </button>
+          <button type="button" id="resetBtn" class="btn-ghost">
+            입력값 초기화
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 결과 영역 -->
+    <section class="section">
+      <h2>결과 요약</h2>
+      <div id="resultBox" class="card result">
+        <p class="muted">위의 항목을 입력한 뒤 “예산 소요액 계산하기”를 누르면 결과가 표시됩니다.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>주의사항</h2>
+      <p class="muted">
+        · 이 계산기는 <b>본예산 편성 보조 도구</b>이며, 최종 예산 편성 권한은 학교장 및 행정실에 있습니다.<br>
+        · 사회보험 요율·강사 단가 등은 연도별 지침을 반드시 확인한 뒤 입력·사용해야 합니다.<br>
+        · 실제 업무에서 지원청 통합 산식과 오차가 발생할 수 있으므로, <b>테스트 후 보정값(보험료 보정)을 활용</b>하세요.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell" style="text-align:center;">
+      <p>늘봄·방과후 예산 편성 스트레스 감소 프로젝트 · 만들어 쓰는 사람: 씩씩한 고주무관</p>
+<div class="home-link-wrap">
+  <a href="/" class="btn-home">메인 페이지로 돌아가기</a>
+  <a href="/initial-budget-calculator-by-departments/" class="btn-home">
+    부서별 본예산 목록으로 돌아가기
+  </a>
+</div>
+
+
+<script src="/static/budget-core.js?v=1"></script>
+  <script src="/initial-budget-calculator-by-departments/after-school-budget-calculator/app.js"></script>
+  <script src="/static/global-loader.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>교육행정실 본예산 편성 내역 계산기</title>
+  <link rel="icon" href="/static/favicon.ico" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/disable-copy.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <h1>교육행정실 예산 계산기</h1>
+      <p class="sub">
+        ·사무용품, 토너, 시설 소규모 수선, 기타 행정 운영비 예산 산출기
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>1. 기본 정보</h2>
+      <form id="aoForm">
+        <div class="grid-3">
+          <div class="field">
+            <label for="aoYear">회계연도</label>
+            <input id="aoYear" type="number" value="2026" min="2020" max="2100" />
+          </div>
+          <div class="field">
+            <label for="aoWriter">작성자</label>
+            <input id="aoWriter" type="text" placeholder="예: 고주무관" />
+          </div>
+          <div class="field">
+            <label>사업부서</label>
+            <input type="text" value="교육행정실" disabled />
+          </div>
+        </div>
+
+        <p class="muted">
+          ·사무용품, 복합기 토너, 시설 소규모 수선비 등 항목별로 입력하면 소계 및 총계 자동 계산됨.
+        </p>
+
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="/initial-budget-calculator-by-departments/" class="btn-home">부서별 메뉴로 돌아가기</a>
+          <a href="/" class="btn-home">메인으로 돌아가기</a>
+        </div>
+
+        <hr>
+
+        <h2>2. 항목 입력</h2>
+        <div class="table-wrapper">
+          <table class="tbl" id="aoTable">
+            <thead>
+              <tr>
+                <th style="width:150px;">카테고리</th>
+                <th>항목명</th>
+                <th style="width:120px;">단가(원)</th>
+                <th style="width:110px;">수량</th>
+                <th style="width:130px;">금액(원)</th>
+                <th style="width:90px;">비고</th>
+                <th style="width:70px;">삭제</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="field" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" id="aoAddRowBtn" class="btn-ghost">+ 행 추가</button>
+          <button type="button" id="aoClearRowsBtn" class="btn-ghost">전체 삭제</button>
+        </div>
+
+        <hr>
+
+        <h2>3. 결과 요약</h2>
+        <div id="aoSummaryBox" class="card result">
+          <p class="muted">교육행정실 예산의 카테고리별 소계와 총계가 표시됩니다.</p>
+        </div>
+
+        <div class="field" style="margin-top:16px;">
+          <button type="button" id="aoMakeNoteBtn" class="btn-primary">
+            세출예산요구서용 설명문 생성
+          </button>
+        </div>
+
+        <div id="aoNoteBox" class="card" style="margin-top:12px;">
+          <p class="muted">교육행정실 예산에 대한 설명문이 자동 생성됩니다.</p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell" style="text-align:center;">
+      <p>행정실 예산은 내 손 안에서 놀아라 · 씩씩한 고주무관 셀프지원</p>
+<div class="home-link-wrap">
+  <a href="/" class="btn-home">메인 페이지로 돌아가기</a>
+  <a href="/initial-budget-calculator-by-departments/" class="btn-home">
+    부서별 본예산 목록으로 돌아가기
+  </a>
+</div>
+
+
+<script src="/static/budget-core.js?v=1"></script>
+  <script src="/initial-budget-calculator-by-departments/administration-office-budget-calculator/app.js"></script>
+  <script src="/static/global-loader.js?v=1"></script>
+</body>
+</html>
+
