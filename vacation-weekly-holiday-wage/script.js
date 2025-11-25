@@ -1,3 +1,5 @@
+//개발할 땐 재밌고 졸린 것도 참을만 한데 
+
 const jobTypeEl = document.getElementById('jobType');
 const startDateEl = document.getElementById('startDate');
 const endDateEl = document.getElementById('endDate');
@@ -166,14 +168,10 @@ function buildDaysTable() {
     tdHours.appendChild(hours);
     tr.appendChild(tdHours);
 
+    // 자동 계산 제거: 단순 상태만 변경
     chk.addEventListener('change', () => {
       hours.disabled = !chk.checked;
       if (!chk.checked) hours.value = '0';
-      recalc();
-    });
-
-    hours.addEventListener('input', () => {
-      recalc();
     });
 
     tbody.appendChild(tr);
@@ -283,26 +281,12 @@ function buildMonthConfigTable() {
       return inp;
     };
 
-    const inpBase = makeCell('month-basePay');
-    const inpDuty = makeCell('month-dutyAllow');
-    const inpMeal = makeCell('month-mealAllow');
-    const inpLong = makeCell('month-longAllow');
-    const inpBonus = makeCell('month-bonusMonthly');
-    const inpHoliday = makeCell('month-holidayBonus');
-
-    // 값 바뀌면 재계산
-    [
-      inpMonthlyPay,
-      inpDays,
-      inpBase,
-      inpDuty,
-      inpMeal,
-      inpLong,
-      inpBonus,
-      inpHoliday
-    ].forEach((el) => {
-      el.addEventListener('input', () => recalc());
-    });
+    makeCell('month-basePay');
+    makeCell('month-dutyAllow');
+    makeCell('month-mealAllow');
+    makeCell('month-longAllow');
+    makeCell('month-bonusMonthly');
+    makeCell('month-holidayBonus');
 
     tbody.appendChild(tr);
   });
@@ -385,24 +369,24 @@ function recalc() {
     workingDaysText.textContent = '-';
     weeklyHoursText.textContent = '-';
     weeklyHoursHintText.textContent =
-      '근무일과 근로시간을 입력하면 1주 15시간 요건 여부를 안내합니다.';
+      '근무일 및 근로시간을 입력하면 주휴수당 지급 요건 확인함.';
 
     restPerDayText.textContent = '-';
     restTotalText.textContent = '-';
     restRuleText.textContent =
-      '방학중근무수당 규칙: 4시간 이하 1만원, 4시간 초과 2만원 (근무일과 시간을 먼저 입력하세요).';
+      '방학중근무수당 규칙: 4시간 이하 1만원, 4시간 초과 2만원.';
 
     holidayDaysText.textContent = '-';
     holidayCondText.textContent =
-      '근무기록이 없어서 주휴수당 요건을 판단할 수 없습니다.';
+      '근무기록 먼저 입력하쇼';
     holidayPerDayText.textContent = '-';
     holidayTotalText.textContent = '-';
     holidayHintText.textContent =
-      '달별 통상임금 산입 항목·기준일수·근무기록을 입력하면 주휴수당을 계산해줍니다.';
+      '위에 입력부터 하쇼';
 
     prorataText.textContent = '-';
     prorataHintText.textContent =
-      '청소원 선택 시, 근무일과 달별 인건비를 입력하면 일할계산 인건비를 보여줍니다.';
+      '청소원 선택 시 일요일만 유급주휴일임임';
 
     grandTotalText.textContent = '-';
     return;
@@ -425,15 +409,15 @@ function recalc() {
     weeklyHoursText.textContent = `${maxWeeklyHours}시간`;
     if (maxWeeklyHours >= 15) {
       weeklyHoursHintText.textContent =
-        '어느 한 주 이상에서 1주 15시간 이상 근무한 것으로 보입니다. 실제 주휴 요건 충족 여부는 다음 주 근무 예정·업무편람 사례를 함께 확인하세요.';
+        '주 15시간 이상 근무';
     } else {
       weeklyHoursHintText.textContent =
-        '모든 주의 실근로시간이 15시간 미만으로, 원칙적으로 방학 중 유급 주휴 요건에 미달합니다.';
+        '주휴수당 지급요건 미달';
     }
   } else {
     weeklyHoursText.textContent = '-';
     weeklyHoursHintText.textContent =
-      '근무일과 근로시간을 입력하면 1주 실근로시간 기준을 보여줍니다.';
+      '근무일 및 근로시간 입력하면 주당 실근로시간 산출출';
   }
 
   let restTotal = 0;
@@ -459,7 +443,7 @@ function recalc() {
       restPerDayText.textContent = '-';
       restTotalText.textContent = '-';
       restRuleText.textContent =
-        '방학중근무수당 규칙: 4시간 이하 1만원, 4시간 초과 2만원 (근무일과 시간을 먼저 입력하세요).';
+        '방학중근무수당은 4시간 이하 1만원, 4시간 초과 2만원.';
     } else {
       if (sameRate && firstRate !== null) {
         restPerDayText.textContent = formatKRW(firstRate);
@@ -468,13 +452,13 @@ function recalc() {
       }
       restTotalText.textContent = formatKRW(restTotal);
       restRuleText.textContent =
-        '각 근무일의 유급 근로시간이 4시간 이하이면 10,000원, 4시간 초과이면 20,000원으로 일자별 합산했습니다. (조리종사원 기준)';
+        '조리종사원 기준';
     }
   } else {
     restPerDayText.textContent = '-';
     restTotalText.textContent = '-';
     restRuleText.textContent =
-      '특수운영직군 청소원은 방학중근무수당 규정보다는, 월급 일할계산으로 인건비를 산정하는 것으로 가정했습니다.';
+      '특수운영직군 청소원은 방학중근무수당 없음. 그냥 일할계산임';
   }
 
   // ----- 3) 주휴수당 / 청소원 일할계산 -----
@@ -483,11 +467,11 @@ function recalc() {
     // 청소원: 주휴 X, 달별 일할계산
     holidayDaysText.textContent = '해당 없음';
     holidayCondText.textContent =
-      '특수운영직군 청소원은 방학중비상시 직종 주휴 규정보다, 월급 일할계산으로 방학 근무분 인건비를 산정하는 것으로 가정했습니다.';
+      '특수운영직군 청소원은 방학중근무수당 없음. 그냥 일할계산임';
     holidayPerDayText.textContent = '-';
     holidayTotalText.textContent = '-';
     holidayHintText.textContent =
-      '청소원은 이 칸에서 주휴수당을 별도로 산정하지 않습니다.';
+      '청소원 주휴수당 미산정';
 
     const workDaysByMonth = {};
     daysArr.forEach((d) => {
@@ -514,11 +498,11 @@ function recalc() {
       prorataTotal = total;
       prorataText.textContent = formatKRW(prorataTotal);
       prorataHintText.textContent =
-        '각 달별로 [월 인건비 ÷ 기준 일수 × 그 달 근로일수]를 계산해 합산했습니다.';
+        '금액*(토요일 제외일수/ 월 총 일수)로 계산함';
     } else {
       prorataText.textContent = '-';
       prorataHintText.textContent =
-        '각 달의 월 인건비와 기준 일수, 그리고 근로일수를 입력하면 청소원 인건비 일할계산을 해줍니다.';
+        '금액, 토요일 제외일수 입력하쇼';
     }
   } else {
     // 조리종사원: 주휴수당 계산
@@ -563,11 +547,11 @@ function recalc() {
     if (totalHolidayDays > 0) {
       holidayDaysText.textContent = `${totalHolidayDays}일`;
       holidayCondText.textContent =
-        '근무기록 기준으로 1주 15시간 이상 + 다음 주 근무 예정 요건을 충족하는 주의 주휴일을, 실제 해당 달별로 분배하여 합산했습니다.';
+        '주휴수당 지급요건 충족';
     } else {
       holidayDaysText.textContent = '-';
       holidayCondText.textContent =
-        '입력된 근무기록 상 1주 15시간 이상 근무 + 다음 주 근무 예정 요건을 충족한 주가 없거나, 주휴일이 포함되지 않은 것으로 보입니다.';
+        '주휴수당 지급요건 미충족';
     }
 
     let totalJhu = 0;
@@ -598,22 +582,22 @@ function recalc() {
       if (monthKeys.length === 1 && singlePerDay !== null) {
         holidayPerDayText.textContent = formatKRW(Math.round(singlePerDay));
         holidayHintText.textContent =
-          '해당 달의 통상임금 산입 항목(기본급·직무관련수당·정액급식비·근속수당·상여·명절휴가비 등) 합계를 기준으로, 기준 일수로 나눠 1일 주휴수당을 계산했습니다.';
+          '주휴수당 1일치 계산';
       } else {
         holidayPerDayText.textContent = '월별 상이 (합계 기준)';
         holidayHintText.textContent =
-          '두 달 이상에 걸쳐 있어, 달별 통상임금 산입 항목·기준일수가 달라 1일 금액은 월별로 상이합니다.';
+          '토요일 제외 일수에 따라 월별로 다를 수 있음';
       }
     } else {
       holidayTotalText.textContent = '-';
       holidayPerDayText.textContent = '-';
       holidayHintText.textContent =
-        '각 달의 통상임금 산입 항목·기준 일수·주휴일 수가 모두 충족되면 주휴수당을 계산해줍니다.';
+        '주휴수당 계산해드림';
     }
 
     prorataText.textContent = '-';
     prorataHintText.textContent =
-      '조리사·조리실무사는 방학중근무수당 + 주휴수당을 기준으로 인건비를 산정하는 것으로 가정했습니다.';
+      '조리종사원은 방학중 근무수당 및 주휴수당 둘 다 지급급';
   }
 
   // ----- 4) 총 인건비 합산 -----
@@ -628,20 +612,44 @@ function recalc() {
     grandTotal > 0 ? formatKRW(grandTotal) : '-';
 }
 
+// 직종에 따라 결과 블록 노출 분리
+function updateResultVisibility() {
+  const jobType = jobTypeEl.value;
+  const isCleaner = jobType === 'cleaner';
+
+  const cookBlock = document.getElementById('cookResultBlock');
+  const cleanerBlock = document.getElementById('cleanerResultBlock');
+
+  if (cookBlock) cookBlock.style.display = isCleaner ? 'none' : '';
+  if (cleanerBlock) cleanerBlock.style.display = isCleaner ? '' : 'none';
+}
+
 // ===== 이벤트 바인딩 =====
 
+// 방학 기간 변경 시: 테이블만 재생성 (계산은 버튼으로)
 [startDateEl, endDateEl].forEach((el) => {
   el.addEventListener('change', () => {
     buildDaysTable();
     buildMonthConfigTable();
-    recalc();
   });
 });
 
+// 직종/주휴일 수 변경 시: 결과 블록 노출만 조정
 [jobTypeEl, holidayDaysPerWeekEl].forEach((el) => {
-  el.addEventListener('change', () => recalc());
+  el.addEventListener('change', () => {
+    updateResultVisibility();
+  });
 });
 
+// 계산하기 버튼 -> 실제 계산 실행
+const calcBtn = document.getElementById('calcBtn');
+if (calcBtn) {
+  calcBtn.addEventListener('click', () => {
+    recalc();
+  });
+}
+
+// 초기 세팅
 buildDaysTable();
 buildMonthConfigTable();
-recalc();
+updateResultVisibility();
