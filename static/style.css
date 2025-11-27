@@ -433,3 +433,17 @@ hr {
   gap: 6px;
 }
 
+
+/* 시급제 인건비 계산기: 요일 그리드 반응형 조정 */
+@media (max-width: 720px) {
+  .days-grid {
+    grid-template-columns: 1fr;  /* 2열 → 1열 */
+  }
+
+  .day-right {
+    justify-content: flex-start; /* 입력칸 왼쪽 정렬 */
+    gap: 10px;
+  }
+}
+
+
