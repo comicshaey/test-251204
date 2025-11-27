@@ -419,3 +419,17 @@ hr {
   border-collapse: collapse;
 }
 
+
+/* ===== 시급제 인건비 계산기: 요일 시각 입력 폭 조정 ===== */
+
+/* 시각 입력용 time 인풋 폭 확장 */
+.range-group input[type="time"] {
+  width: 120px;        /* 기존보다 넓게 */
+  font-size: 0.9rem;   /* 글자도 약간 키움 */
+}
+
+/* 오전/오후 라벨이랑 간격 조금 띄우기 */
+.range-group {
+  gap: 6px;
+}
+
