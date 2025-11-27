@@ -48,7 +48,10 @@ const hasAnyPlannedWork = (weekArr) => weekArr.some((it) => it.paidHours > 0);
 
 // 요일 ID들
 const DAY_IDS = ["mon","tue","wed","thu","fri","sat","sun"];
-const DAY_HOUR_IDS = { mon:"#monHours", tue:"#tueHours", wed:"#wedHours", thu:"#thuHours", fri:"#friHours", sat:"#satHours", sun:"#sunHours" };
+const DAY_HOUR_IDS = {
+  mon:"#monHours", tue:"#tueHours", wed:"#wedHours",
+  thu:"#thuHours", fri:"#friHours", sat:"#satHours", sun:"#sunHours"
+};
 
 // 계산
 const calc = () => {
@@ -60,6 +63,16 @@ const calc = () => {
   const breakEnabled = $("#breakEnabled")?.checked || false;
   const breakMinutes = Number($("#breakMinutes")?.value) || 0;
   const breakHours = breakEnabled ? Math.max(0, breakMinutes / 60) : 0;
+
+  // 공휴일·제외일 입력값 파싱
+  // 쉼표, 줄바꿈, 공백 기준으로 잘라서 yyyy-mm-dd 문자열 Set으로 관리
+  const excludeRaw = $("#excludeDates")?.value || "";
+  const excludeSet = new Set(
+    excludeRaw
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+  );
 
   // 요일별 계획 읽기
   const workPlan = {};
@@ -79,23 +92,37 @@ const calc = () => {
   if (!anyChecked)
     return showResult({ msg:"근무 요일과 시간을 입력해줘" });
 
-  // 주 소정 근무시간
-  const weeklyRaw = DAY_IDS.reduce((s,id)=> s + (workPlan[id].checked ? workPlan[id].rawHrs : 0), 0);
-  const weeklyPaid = DAY_IDS.reduce((s,id)=> s + (workPlan[id].checked ? workPlan[id].paidHrs : 0), 0);
+  // 주 소정 근무시간 (패턴 기준, 실제 근무일수와 무관)
+  const weeklyRaw = DAY_IDS.reduce(
+    (s,id)=> s + (workPlan[id].checked ? workPlan[id].rawHrs : 0), 0
+  );
+  const weeklyPaid = DAY_IDS.reduce(
+    (s,id)=> s + (workPlan[id].checked ? workPlan[id].paidHrs : 0), 0
+  );
 
   // 기간 내 날짜별 레코드
   const mapIdxToKey = ["","mon","tue","wed","thu","fri","sat","sun"];
   const daysArr = [];
+  let excludedCount = 0; // 공휴일·제외일 개수
+
   for (let d = new Date(start); isSameOrBefore(d, end); d = addDays(d, 1)) {
+    const dateStr = ymd(d);
+
+    // 제외일이면 완전히 스킵 (기본급·주휴·근로일 카운트에서 모두 제외)
+    if (excludeSet.has(dateStr)) {
+      excludedCount += 1;
+      continue;
+    }
+
     const kn = dayToKoreaNum(d);
     const key = mapIdxToKey[kn];
     const plan = workPlan[key];
-    const planned = !!(plan.checked && plan.rawHrs > 0);
+    const planned = !!(plan && plan.checked && plan.rawHrs > 0);
     const paid = planned ? plan.paidHrs : 0;
 
     daysArr.push({
       date: new Date(d),
-      ymd: ymd(d),
+      ymd: dateStr,
       weekNoKey: weekKeyMonToSun(d),
       isSunday: kn === 7,
       planned,
@@ -129,6 +156,8 @@ const calc = () => {
       (it) => it.isSunday && isSameOrAfter(it.date, start) && isSameOrBefore(it.date, end)
     );
 
+    // 제외일 처리 때문에, 설 연휴처럼 통으로 빼버린 주의 일요일은 daysArr에 아예 안 들어온다.
+    // 따라서 sundayInside=false → 그 주는 주휴수당 없음.
     if (weeklyHours >= 15 && hasNext && sundayInside && weeklyWorkDays > 0) {
       const avgDailyPaidHrs = weeklyHours / weeklyWorkDays;
       jhuRawSum += avgDailyPaidHrs * hourly;
@@ -147,6 +176,7 @@ const calc = () => {
     basePay, jhuPay, total, remain,
     workDays: workDayCount, jhuDays: jhuDaysCount,
     weeklyRaw, weeklyPaid,
+    excludedDays: excludedCount,
     msg: ""
   });
 };
@@ -155,14 +185,26 @@ const calc = () => {
 const showResult = (o) => {
   const {
     basePay=0, jhuPay=0, total=0, remain=0,
-    workDays=0, jhuDays=0, weeklyRaw=0, weeklyPaid=0, msg=""
+    workDays=0, jhuDays=0, weeklyRaw=0, weeklyPaid=0,
+    excludedDays=0,
+    msg=""
   } = o || {};
 
   const paidDays = workDays + jhuDays;
   const lineEl = $("#outDaysLine");
-  if (lineEl) lineEl.textContent = `실근로일 ${workDays}일 + 유급주휴일 ${jhuDays}일 = 총 ${paidDays}일`;
+  if (lineEl) {
+    // 간단한 문구 정리: 근로일/주휴일/제외일 한 줄에
+    const parts = [];
+    parts.push(`실근로일 ${workDays}일`);
+    parts.push(`유급주휴일 ${jhuDays}일`);
+    if (excludedDays > 0) parts.push(`제외일 ${excludedDays}일`);
+    lineEl.textContent = parts.join(" · ") + ` → 총 ${paidDays}일 유급`;
+  }
 
-  const set = (sel, val) => { const el = $(sel); if (el) el.textContent = fmt(val); };
+  const set = (sel, val) => {
+    const el = $(sel);
+    if (el) el.textContent = fmt(val);
+  };
   set("#outWeeklyRaw", weeklyRaw);          // 시간 단위 그대로 표시
   set("#outWeeklyPaid", weeklyPaid);        // 휴게 반영된 유급 기준
   set("#outBase", basePay);
@@ -182,7 +224,10 @@ const showResult = (o) => {
 // 바인딩
 document.addEventListener("DOMContentLoaded", () => {
   const btn = $("#btnCalc");
-  if (btn) btn.addEventListener("click", (e) => { e.preventDefault(); calc(); });
+  if (btn) btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    calc();
+  });
 
   // 체크 해제 시 시간 0으로
   const pairs = [
