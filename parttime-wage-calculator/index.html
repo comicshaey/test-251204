@@ -408,16 +408,25 @@
         </div>
       </div>
 
-      <!-- 공휴일·제외일 -->
+      <!-- 공휴일·추가 제외일 -->
       <div class="field-row">
-        <label for="excludeDates">공휴일·계약 제외일</label>
+        <label for="excludeDates">추가 제외일</label>
         <textarea
           id="excludeDates"
-          placeholder="예: 2025-01-27, 2025-01-28, 2025-01-29&#10;쉼표(,) 또는 줄바꿈으로 여러 날짜 입력"
+          placeholder="예: 2025-01-27, 2025-02-10&#10;쉼표(,) 또는 줄바꿈으로 여러 날짜 입력"
         ></textarea>
         <div class="hint">
-          입력한 날짜는 실근로·주휴수당 산정에서 모두 제외됩니다.
-          설 연휴, 학교 행사로 근로하지 않는 날 등을 직접 넣어주세요.
+          학교 행사, 기관 사정 등으로 근로하지 않는 날을 직접 입력합니다.
+        </div>
+
+        <div style="margin-top:8px;">
+          <label style="font-weight:400; display:flex; align-items:center; gap:6px;">
+            <input type="checkbox" id="autoHoliday" checked />
+            <span>대한민국 관공서 공휴일 자동 반영 (현재 2025년 기준)</span>
+          </label>
+          <div class="hint">
+            설·추석, 삼일절, 어린이날, 현충일, 광복절, 개천절, 한글날, 성탄절 등은 별도 입력 없이 제외일로 처리됩니다.
+          </div>
         </div>
       </div>
 
