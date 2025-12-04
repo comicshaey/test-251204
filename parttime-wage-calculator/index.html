@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>시급제 근로계약자 인건비 소요액 계산기</title>
+  <title>시급제(일급제) 근로계약자 인건비 소요액 계산기</title>
 
   <link rel="icon" href="/static/favicon.ico" />
   <link rel="stylesheet" href="/static/style.css" />
@@ -200,8 +200,14 @@
 
 <body>
   <main>
-    <h1>시급제 근로계약자 인건비 소요액 계산기</h1>
+    <h1>시급제(일급제) 근로계약자 인건비 소요액 계산기</h1>
 
+    <p class="muted">
+      ·학교회계 예산편성 지침: 대체인력 등 일용직 단가 일당 89,600원 (시급 11,200원) 반영함.
+    </p>
+    
+    
+    
     <div class="section">
       <!-- 기간 -->
       <div class="field-row">
@@ -217,7 +223,7 @@
       <!-- 시급 -->
       <div class="field-row">
         <label for="hourlyWage">시급 (원단위)</label>
-        <input type="number" id="hourlyWage" value="11000" />
+        <input type="number" id="hourlyWage" value="11200" />
       </div>
 
       <!-- 입력 방식 선택 -->
@@ -416,16 +422,16 @@
           placeholder="예: 2025-01-27, 2025-02-10&#10;쉼표(,) 또는 줄바꿈으로 여러 날짜 입력"
         ></textarea>
         <div class="hint">
-          학교 행사, 기관 사정 등으로 근로하지 않는 날을 직접 입력합니다.
+          양력 공휴일만 자동으로 제외되고, 음력 공휴일이랑 기타 휴일은 직접 입력해야 함.
         </div>
 
         <div style="margin-top:8px;">
           <label style="font-weight:400; display:flex; align-items:center; gap:6px;">
             <input type="checkbox" id="autoHoliday" checked />
-            <span>대한민국 관공서 공휴일 자동 반영 (현재 2025년 기준)</span>
+            <span>대한민국 관공서 공휴일 자동 반영 </span>
           </label>
           <div class="hint">
-            설·추석, 삼일절, 어린이날, 현충일, 광복절, 개천절, 한글날, 성탄절 등은 별도 입력 없이 제외일로 처리됩니다.
+            설·추석, 삼일절, 어린이날, 현충일, 광복절, 개천절, 한글날, 성탄절 등은 별도 입력 없이 제외일로 처리
           </div>
         </div>
       </div>
@@ -473,10 +479,15 @@
       </div>
     </div>
 
-    <footer>
-      ·시급제 근로계약자 인건비 소요액 산정용 내부 참고 도구입니다.<br />
-      ·실제 집행 시 관련 지침·단체협약·근로기준법 등을 반드시 함께 확인하세요.
-    </footer>
+<footer style="text-align:center; margin-top:15px; color:#444;">
+  제작자: 씩씩하고 귀여운 고주무관 · Contact: edusproutcomics@naver.com · 개인적인 토이 프로젝트입니다.
+</footer>
   </main>
+   <script src="/static/global-loader.js?v=1"></script>
+  
 </body>
 </html>
+
+
+
+
